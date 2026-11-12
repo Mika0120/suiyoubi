@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oshi-Coord AI｜推し概念×天気×骨格 マネキン買いスタイリスト</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-badge">MVP</span>
+        <h1>Oshi-Coord AI</h1>
+      </div>
+      <p class="tagline">推しの概念 × 明日の天気 × 自分の骨格 ＝ 失敗しないマネキン買い</p>
+      <button id="open-settings-btn" class="icon-btn" type="button" title="API連携設定">
+        ⚙ API設定
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Input Form Card -->
+    <section class="card input-section">
+      <h2 class="section-title">1. コーデ条件を入力</h2>
+
+      <form id="coord-form">
+        <!-- ① Image Upload -->
+        <div class="form-group">
+          <label class="field-label">① 推し・概念画像をアップロード</label>
+          <div id="drop-zone" class="drop-zone">
+            <input type="file" id="image-input" accept="image/*" hidden />
+            <div id="upload-placeholder" class="upload-placeholder">
+              <div class="upload-icon">🖼️</div>
+              <p>画像をドラッグ＆ドロップ、またはクリックして選択</p>
+              <span class="sub-hint">キャラ画像・衣装・ライブの雰囲気写真など</span>
+            </div>
+            <div id="preview-wrapper" class="preview-wrapper hidden">
+              <img id="image-preview" alt="アップロード画像プレビュー" />
+              <button type="button" id="clear-image-btn" class="clear-btn">× 変更</button>
+            </div>
+          </div>
+
+          <div class="preset-row">
+            <span class="preset-label">またはサンプルで試す：</span>
+            <button type="button" class="preset-btn" data-preset="crimson">🔥 クール紅黒</button>
+            <button type="button" class="preset-btn" data-preset="pastel">🎀 パステル夢かわ</button>
+            <button type="button" class="preset-btn" data-preset="cyber">⚡ サイバー紫</button>
+          </div>
+
+          <input
+            type="text"
+            id="oshi-hint"
+            class="text-input mt-sm"
+            placeholder="任意：推しの雰囲気・キャラ名メモ（例：ダークファンタジー、アイドル衣装）"
+          />
+        </div>
+
+        <!-- ② Date & Location -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="target-date" class="field-label">② 予定日</label>
+            <input type="date" id="target-date" class="text-input" required />
+          </div>
+          <div class="form-group">
+            <label for="location-input" class="field-label">場所（地域）</label>
+            <input
+              type="text"
+              id="location-input"
+              class="text-input"
+              list="city-presets"
+              value="東京"
+              placeholder="例：東京、大阪、ソウル"
+              required
+            />
+            <datalist id="city-presets">
+              <option value="東京"></option>
+              <option value="大阪"></option>
+              <option value="名古屋"></option>
+              <option value="福岡"></option>
+              <option value="札幌"></option>
+              <option value="仙台"></option>
+              <option value="横浜"></option>
+              <option value="京都"></option>
+              <option value="沖縄"></option>
+              <option value="ソウル"></option>
+              <option value="台北"></option>
+            </datalist>
+          </div>
+        </div>
+
+        <!-- ③ Buyer Gender -->
+        <div class="form-group">
+          <label class="field-label">③ 購入者のスタイル（女の子 / 男の子）</label>
+          <div class="gender-grid">
+            <label class="skeleton-card">
+              <input type="radio" name="gender" value="women" checked />
+              <div class="skeleton-content">
+                <strong>👧 女の子（レディース）</strong>
+                <span>レディース向けアイテム＆骨格理論で選定</span>
+              </div>
+            </label>
+            <label class="skeleton-card">
+              <input type="radio" name="gender" value="men" />
+              <div class="skeleton-content">
+                <strong>👦 男の子（メンズ）</strong>
+                <span>メンズ向けアイテム＆骨格理論で選定</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- ④ Skeleton Type -->
+        <div class="form-group">
+          <label class="field-label">④ あなたの骨格タイプ（似合わない服を自動除外）</label>
+          <div class="skeleton-grid">
+            <label class="skeleton-card">
+              <input type="radio" name="skeleton_type" value="straight" />
+              <div class="skeleton-content">
+                <strong>骨格ストレート</strong>
+                <span>Iライン・ジャストサイズ・ハリ感素材</span>
+              </div>
+            </label>
+            <label class="skeleton-card">
+              <input type="radio" name="skeleton_type" value="wave" checked />
+              <div class="skeleton-content">
+                <strong>骨格ウェーブ</strong>
+                <span>ハイウエスト・シフォン・Xライン</span>
+              </div>
+            </label>
+            <label class="skeleton-card">
+              <input type="radio" name="skeleton_type" value="natural" />
+              <div class="skeleton-content">
+                <strong>骨格ナチュラル</strong>
+                <span>オーバーサイズ・デニム・リネン</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- ⑤ Budget Limit -->
+        <div class="form-group">
+          <label for="budget-select" class="field-label">⑤ 予算上限（全身セット）</label>
+          <select id="budget-select" class="text-input">
+            <option value="2000">¥2,000 以内（超プチプラ）</option>
+            <option value="3000">¥3,000 以内（プチプラ）</option>
+            <option value="4000">¥4,000 以内（お手頃）</option>
+            <option value="5000">¥5,000 以内</option>
+            <option value="6000">¥6,000 以内</option>
+            <option value="10000" selected>¥10,000 以内（バランス重視）</option>
+            <option value="15000">¥15,000 以内（しっかりコーデ）</option>
+            <option value="20000">¥20,000 以内</option>
+            <option value="0">上限なし（ベストマッチ優先）</option>
+          </select>
+        </div>
+
+        <button type="submit" id="submit-btn" class="primary-btn">
+          ✨ AIで全身コーディネートを提案する
+        </button>
+      </form>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="results-section hidden">
+      <div class="analysis-grid">
+        <!-- Vision Analysis Card -->
+        <div class="card analysis-card">
+          <div class="card-head">
+            <h3>🎨 推し概念の抽出結果（クリックで色変更可）</h3>
+            <span id="vision-source-badge" class="source-badge">Local Canvas</span>
+          </div>
+          <div id="color-swatches" class="swatches"></div>
+          <div class="meta-tags">
+            <div class="vibe-edit-row">
+              <label for="edit-vibe-select" class="meta-label">雰囲気 (Vibe):</label>
+              <select id="edit-vibe-select" class="text-input compact-select">
+                <option value="cool_mode">クール・モード</option>
+                <option value="sweet_girly">甘め・ガーリー</option>
+                <option value="street_casual">ストリート・カジュアル</option>
+                <option value="elegant_classic">上品・フェミニン</option>
+                <option value="subculture_cyber">サブカル・サイバー</option>
+              </select>
+            </div>
+            <div><span class="meta-label">推奨素材:</span> <span id="materials-label"></span></div>
+          </div>
+          <div class="repropose-actions">
+            <button type="button" id="repropose-btn" class="secondary-btn">
+              🔄 この色・条件で再提案する
+            </button>
+            <button type="button" id="scroll-to-form-btn" class="ghost-btn">
+              ⬆ 性別・骨格・予算を変更
+            </button>
+          </div>
+        </div>
+
+        <!-- Weather Analysis Card -->
+        <div class="card analysis-card">
+          <div class="card-head">
+            <h3>🌤 予定日の天気・気温</h3>
+            <span id="weather-source-badge" class="source-badge">Simulation</span>
+          </div>
+          <div class="weather-main">
+            <div class="weather-temp"><span id="weather-temp">--</span>℃</div>
+            <div class="weather-detail">
+              <div id="weather-loc-date" class="weather-loc"></div>
+              <div id="weather-cond" class="weather-cond"></div>
+            </div>
+          </div>
+          <p id="weather-advice" class="weather-advice"></p>
+        </div>
+      </div>
+
+      <!-- Skeleton Filter Banner -->
+      <div class="card skeleton-banner">
+        <div class="banner-top">
+          <span class="filter-pill">🦴 骨格パーソナライズフィルター適用中</span>
+          <span id="excluded-count-badge" class="excluded-badge"></span>
+        </div>
+        <p id="skeleton-rule-desc" class="banner-desc"></p>
+      </div>
+
+      <!-- Recommended Outfit Set -->
+      <div class="card outfit-section">
+        <div class="outfit-header">
+          <div>
+            <h2 class="section-title mb-0">2. あなた専用の全身マネキン買いセット</h2>
+            <p class="outfit-sub">そのまま各ECサイトで購入できるアフィリエイトリンク付き</p>
+          </div>
+          <div class="total-price-box">
+            <span class="total-label">セット合計（目安）</span>
+            <strong id="total-price" class="total-price">¥0</strong>
+            <span id="budget-status" class="budget-status"></span>
+          </div>
+        </div>
+
+        <div id="outfit-items" class="outfit-grid"></div>
+      </div>
+
+      <!-- EC Site Photo Showcase (3 ZOZOTOWN + 3 SHEIN = 6 items) -->
+      <div class="card showcase-section">
+        <div class="showcase-head">
+          <h2 class="section-title mb-0">3. 各ECサイトのおすすめピックアップ（各3着・計6着）</h2>
+          <p class="outfit-sub">ZOZOTOWN・SHEINの実際の商品写真と直結リンク</p>
+        </div>
+
+        <div class="ec-group">
+          <div class="ec-group-title">
+            <span class="ec-badge zozo">ZOZOTOWN</span>
+            <span>おすすめ 3着</span>
+          </div>
+          <div id="zozo-showcase-grid" class="showcase-grid"></div>
+        </div>
+
+        <div class="ec-group">
+          <div class="ec-group-title">
+            <span class="ec-badge shein">SHEIN</span>
+            <span>おすすめ 3着</span>
+          </div>
+          <div id="shein-showcase-grid" class="showcase-grid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- API Settings Modal -->
+  <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content card">
+      <div class="modal-head">
+        <h3>⚙ 外部API連携設定（任意）</h3>
+        <button id="close-settings-btn" class="clear-btn" type="button">×</button>
+      </div>
+      <p class="modal-desc">
+        未入力のままでもローカル解析＆気象シミュレーションで動作します。本番APIキーを入力するとリアルタイム連携に切り替わります（ブラウザ内のみに一時保持）。
+      </p>
+      <div class="form-group">
+        <label class="field-label" for="gemini-key">Gemini API Key（画像認識）</label>
+        <input type="password" id="gemini-key" class="text-input" placeholder="AIza..." />
+      </div>
+      <div class="form-group">
+        <label class="field-label" for="weather-key">OpenWeatherMap API Key（天気予報）</label>
+        <input type="password" id="weather-key" class="text-input" placeholder="32文字のAPIキー" />
+      </div>
+      <div class="form-group">
+        <label class="field-label" for="affiliate-id">アフィリエイトID（SHEIN / ZOZOTOWN）</label>
+        <input type="text" id="affiliate-id" class="text-input" placeholder="例：oshi_coord_mvp" />
+      </div>
+      <button id="save-settings-btn" class="primary-btn" type="button">設定を保存</button>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
